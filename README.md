@@ -1,3 +1,5 @@
+<p align="center"><img src="public/logo.svg" width="96" height="96" alt="TTS Voice"></p>
+
 # TTS Voice
 
 Synthèse vocale **gratuite**, sans clé ni compte, avec deux moteurs de voix : `edge` (voix neuronales) et `google`. Le projet propose :
@@ -44,6 +46,7 @@ Relancez cette commande pour mettre le moteur à jour. Sans elle, le serveur dé
 | Variable | Défaut | Rôle |
 |---|---|---|
 | `PORT` | 3000 | Port HTTP |
+| `PUBLIC_URL` | — | URL publique du site (ex. `https://tts.mondomaine.fr`) pour les balises canonical et Open Graph. Vide = déduite de la requête |
 | `TTS_API_KEYS` | — | Liste de clés séparées par des virgules (`Authorization: Bearer <clé>` ou `X-API-Key`). Une clé valide donne la limite `TTS_RATE_LIMIT` ; sans clé l'accès reste possible avec `TTS_ANON_RATE_LIMIT` ; une clé invalide est refusée (401) |
 | `TTS_RATE_LIMIT` | 60 | Synthèses par minute et par IP (0 = illimité) |
 | `TTS_ANON_RATE_LIMIT` | 10 | Synthèses par minute et par IP sans clé, quand `TTS_API_KEYS` est défini (0 = illimité) |
@@ -137,7 +140,7 @@ Le dépôt contient un `Dockerfile` prêt à l'emploi : Node 22, ffmpeg et le mo
 3. Onglet **General** :
    - **Provider** : votre dépôt, branche `main`.
    - **Build Type** : `Dockerfile`, avec **Docker File** = `Dockerfile` et **Docker Context Path** = `.`.
-4. Onglet **Environment** : reprendre les variables utiles de `.env.example`. Définissez au minimum `TTS_API_KEYS` si le serveur est public.
+4. Onglet **Environment** : reprendre les variables utiles de `.env.example`. Définissez au minimum `PUBLIC_URL` (votre domaine, pour l'aperçu des liens partagés) et `TTS_API_KEYS` si le serveur est public.
 5. Onglet **Advanced → Volumes** : ajouter un **Volume Mount** (par exemple `tts-cache`) monté sur `/data/cache`. Le cache audio survit ainsi aux redéploiements.
 6. Onglet **Domains** : votre domaine, **Container Port** = `3000`, HTTPS avec Let's Encrypt.
 7. **Deploy**. Pour déployer à chaque push, activez **Auto Deploy** (webhook).

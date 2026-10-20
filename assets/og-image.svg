@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Source de public/og-image.png (export 1200x630) -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef0ff"/>
+    </linearGradient>
+    <linearGradient id="logo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Onde décorative à droite -->
+  <g transform="translate(30 0)" stroke="url(#wave)" stroke-width="22" stroke-linecap="round" opacity=".9">
+    <path d="M790 285v60M838 235v160M886 175v280M934 255v120M982 205v220M1030 160v310M1078 245v140M1126 290v50"/>
+  </g>
+
+  <!-- Logo -->
+  <rect x="80" y="80" width="96" height="96" rx="24" fill="url(#logo)"/>
+  <g transform="translate(92 92) scale(3)" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+    <path d="M2 10v3M6 6v11M10 3v18M14 8v7M18 5v13M22 10v3"/>
+  </g>
+
+  <g font-family="Inter, 'Noto Sans', 'Liberation Sans', sans-serif" fill="#161a2b">
+    <text x="80" y="292" font-size="76" font-weight="800" letter-spacing="-2">TTS Voice Studio</text>
+    <text x="80" y="354" font-size="34" font-weight="500" fill="#4f46e5">Synthèse vocale gratuite et auto-hébergée</text>
+    <text x="80" y="420" font-size="26" fill="#646b85">Voix neuronales hommes et femmes, multi-voix,</text>
+    <text x="80" y="458" font-size="26" fill="#646b85">sous-titres SRT/VTT, textes illimités.</text>
+
+    <g font-size="22" font-weight="600" fill="#4338ca">
+      <rect x="80" y="514" width="150" height="48" rx="24" fill="#e0e3ff"/>
+      <text x="155" y="545" text-anchor="middle">API HTTP</text>
+      <rect x="246" y="514" width="164" height="48" rx="24" fill="#e0e3ff"/>
+      <text x="328" y="545" text-anchor="middle">Playground</text>
+      <rect x="426" y="514" width="96" height="48" rx="24" fill="#e0e3ff"/>
+      <text x="474" y="545" text-anchor="middle">CLI</text>
+      <rect x="538" y="514" width="128" height="48" rx="24" fill="#e0e3ff"/>
+      <text x="602" y="545" text-anchor="middle">Docker</text>
+    </g>
+  </g>
+</svg>

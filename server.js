@@ -49,7 +49,28 @@ app.use(cors({ exposedHeaders: ['X-Audio-Id', 'X-Audio-Duration', 'X-Requests', 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.text({ type: 'text/plain', limit: '2mb' }));
 app.use(express.urlencoded({ extended: false, limit: '2mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+
+// ==================== PAGES ET SEO ====================
+
+// URL publique pour les balises canonical / Open Graph (sinon déduite de la requête, derrière proxy via TRUST_PROXY)
+const PUBLIC_URL = (process.env.PUBLIC_URL || '').replace(/\/+$/, '');
+const baseUrl = req => PUBLIC_URL || `${req.protocol}://${req.get('host')}`;
+const INDEX_HTML = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+
+app.get(['/', '/index.html'], (req, res) => {
+    res.type('html').set('Cache-Control', 'no-cache').send(INDEX_HTML.replaceAll('%BASE_URL%', baseUrl(req)));
+});
+app.get('/robots.txt', (req, res) => {
+    res.type('text').send(`User-agent: *\nAllow: /\nDisallow: /v1/\nDisallow: /tts\n\nSitemap: ${baseUrl(req)}/sitemap.xml\n`);
+});
+app.get('/sitemap.xml', (req, res) => {
+    res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>${baseUrl(req)}/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+</urlset>
+`);
+});
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 
 // ==================== MIDDLEWARES ====================
 

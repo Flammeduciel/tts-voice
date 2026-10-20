@@ -57,7 +57,6 @@ code, kbd, pre { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, 
 }
 .brand { display: flex; gap: .75rem; align-items: center; flex: 1; min-width: 0; }
 .brand .muted { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.logo { font-size: 1.7rem; }
 .tabs { display: flex; gap: .25rem; background: var(--surface-2); padding: .25rem; border-radius: 10px; }
 .tab { border: 0; background: none; color: var(--muted); padding: .4rem .95rem; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer; }
 .tab.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
@@ -218,8 +217,7 @@ td code { background: var(--surface-2); padding: .05rem .3rem; border-radius: 5p
 
 /* ---------- Icônes (Lucide) ---------- */
 .lucide { width: 1.05em; height: 1.05em; flex: none; stroke-width: 2; vertical-align: -0.15em; }
-.logo { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
-.logo .lucide { width: 22px; height: 22px; }
+.logo { display: block; flex-shrink: 0; width: 40px; height: 40px; border-radius: 11px; }
 h3 { display: flex; align-items: center; gap: .4rem; }
 h3 .lucide { width: 14px; height: 14px; }
 .icon-btn { display: grid; place-items: center; }

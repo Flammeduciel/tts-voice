@@ -3,15 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TTS Voice Studio</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.5' stroke-linecap='round'><path d='M2 10v3M6 6v11M10 3v18M14 8v7M18 5v13M22 10v3'/></svg>">
+    <title>TTS Voice Studio · Synthèse vocale gratuite, voix neuronales et API</title>
+    <meta name="description" content="Transformez du texte en voix naturelle, gratuitement : voix neuronales hommes et femmes, multi-voix, vitesse et hauteur réglables, sous-titres SRT/VTT, export MP3/OGG/WAV. API HTTP et playground auto-hébergeables.">
+    <meta name="keywords" content="synthèse vocale, text to speech, TTS gratuit, voix française, voix neuronale, lecture de texte, API TTS, sous-titres, MP3">
+    <meta name="author" content="Flamme WASS">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d1020" media="(prefers-color-scheme: dark)">
+    <link rel="canonical" href="%BASE_URL%/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TTS Voice Studio">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:url" content="%BASE_URL%/">
+    <meta property="og:title" content="TTS Voice Studio · Synthèse vocale gratuite">
+    <meta property="og:description" content="Voix neuronales hommes et femmes, multi-voix, sous-titres SRT/VTT et API HTTP. Gratuit et auto-hébergeable.">
+    <meta property="og:image" content="%BASE_URL%/og-image.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="TTS Voice Studio, synthèse vocale gratuite et auto-hébergée">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TTS Voice Studio · Synthèse vocale gratuite">
+    <meta name="twitter:description" content="Voix neuronales hommes et femmes, multi-voix, sous-titres SRT/VTT et API HTTP. Gratuit et auto-hébergeable.">
+    <meta name="twitter:image" content="%BASE_URL%/og-image.png">
+    <meta name="twitter:image:alt" content="TTS Voice Studio, synthèse vocale gratuite et auto-hébergée">
+
+    <!-- Icônes -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="icon" href="/logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "TTS Voice Studio",
+        "url": "%BASE_URL%/",
+        "image": "%BASE_URL%/og-image.png",
+        "description": "Synthèse vocale gratuite : voix neuronales hommes et femmes, multi-voix, sous-titres SRT/VTT, API HTTP.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "fr",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "author": { "@type": "Person", "name": "Flamme WASS" },
+        "codeRepository": "https://github.com/Flammeduciel/tts-voice"
+    }
+    </script>
     <script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
     <div class="brand">
-        <span class="logo"><i data-lucide="audio-lines"></i></span>
+        <img class="logo" src="/logo.svg" width="40" height="40" alt="TTS Voice Studio">
         <div>
             <h1>TTS Voice Studio</h1>
             <p class="muted" id="serverInfo">Connexion au serveur…</p>
