@@ -1,0 +1,27 @@
+# Dépendances
+node_modules/
+.python/
+
+# Cache et fichiers générés
+.cache/
+output/
+temp_chunks/
+.probe/
+*.checkpoint.json
+*.mp3
+*.ogg
+*.wav
+*.flac
+*.aac
+
+# Environnement
+.env
+.env.*
+!.env.example
+
+# Système / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

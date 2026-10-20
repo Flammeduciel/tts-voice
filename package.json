@@ -1,0 +1,44 @@
+{
+  "name": "google-tts-ultra",
+  "version": "3.0.0",
+  "description": "TTS gratuit : API HTTP, playground, CLI et bibliothèque Node, deux moteurs de voix (textes illimités, vitesse/hauteur réelles, multi-voix, sous-titres)",
+  "main": "index.js",
+  "bin": {
+    "tts": "./tts.js",
+    "tts-server": "./server.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "tts": "node tts.js",
+    "test": "node --test",
+    "setup:edge": "pip3 install --upgrade --disable-pip-version-check --target .python edge-tts"
+  },
+  "keywords": [
+    "tts",
+    "text-to-speech",
+    "google",
+    "french",
+    "voice",
+    "speech-synthesis",
+    "unlimited",
+    "api",
+    "subtitles",
+    "srt",
+    "ffmpeg",
+    "edge-tts",
+    "neural"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "google-tts-api": "^2.0.2",
+    "ws": "^8.22.0"
+  },
+  "engines": {
+    "node": ">=20.12.0"
+  }
+}

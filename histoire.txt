@@ -1,0 +1,13 @@
+Chapitre 1
+
+Il était une fois, dans un royaume lointain, un jeune programmeur nommé Alex. Chaque jour, il écrivait du code pour donner vie à ses idées. Un matin, il découvrit une ancienne bibliothèque oubliée au fond d'un dépôt GitHub.
+
+Chapitre 2
+
+La bibliothèque contenait des sorts puissants : la synthèse vocale, la reconnaissance d'images, la compréhension du langage naturel. Alex comprit qu'avec ces outils, il pouvait faire parler les machines.
+
+Chapitre 3
+
+Il passa des nuits entières à expérimenter. Les premières voix étaient robotiques, mais il persévéra. Il découvrit le découpage intelligent, la fusion audio, la reprise sur erreur. Finalement, il créa un système capable de lire des livres entiers.
+
+Fin.

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TTS Voice Studio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.5' stroke-linecap='round'><path d='M2 10v3M6 6v11M10 3v18M14 8v7M18 5v13M22 10v3'/></svg>">
+    <script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+        <span class="logo"><i data-lucide="audio-lines"></i></span>
+        <div>
+            <h1>TTS Voice Studio</h1>
+            <p class="muted" id="serverInfo">Connexion au serveur…</p>
+        </div>
+    </div>
+    <nav class="tabs" role="tablist">
+        <button role="tab" class="tab active" data-tab="studio" aria-selected="true">Studio</button>
+        <button role="tab" class="tab" data-tab="api" aria-selected="false">API</button>
+    </nav>
+    <button class="icon-btn" id="themeBtn" title="Changer de thème" aria-label="Changer de thème"><i data-lucide="sun-moon"></i></button>
+</header>
+
+<main>
+    <!-- ===================== STUDIO ===================== -->
+    <section id="tab-studio" class="tab-panel">
+        <div class="layout">
+            <div class="col-main">
+                <div class="card editor-card" id="dropZone">
+                    <div class="toolbar">
+                        <div class="tool-group">
+                            <button class="chip" data-insert="pause" title="Insérer un silence"><i data-lucide="pause"></i>Pause</button>
+                            <select class="chip-select" id="insertVoice" title="Lire la sélection (ou la suite) avec une autre voix" aria-label="Insérer un changement de voix">
+                                <option value="">Autre voix…</option>
+                            </select>
+                            <button class="chip" data-insert="slow" title="Passage en diction lente"><i data-lucide="turtle"></i>Lent</button>
+                        </div>
+                        <div class="tool-group">
+                            <select id="samples" class="chip-select" aria-label="Exemples">
+                                <option value="">Exemples…</option>
+                                <option value="intro">Présentation</option>
+                                <option value="dialogue">Dialogue multi-voix</option>
+                                <option value="story">Histoire (paragraphes)</option>
+                                <option value="markdown">Réponse markdown (LLM)</option>
+                            </select>
+                            <label class="chip" title="Charger un fichier texte"><i data-lucide="file-text"></i>Fichier<input type="file" id="fileInput" accept=".txt,.md,text/plain" hidden></label>
+                            <button class="chip" id="clearBtn" title="Vider" aria-label="Vider"><i data-lucide="x"></i></button>
+                        </div>
+                    </div>
+                    <textarea id="text" spellcheck="true" placeholder="Tapez ou collez votre texte… (glissez-déposez un .txt)"></textarea>
+                    <div class="editor-foot">
+                        <span id="stats">0 caractère</span>
+                        <span class="muted" id="planInfo"></span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="primary" id="generateBtn">
+                        <i data-lucide="audio-lines"></i><span>Générer</span><kbd>Ctrl ↵</kbd>
+                    </button>
+                    <button class="ghost" id="cancelBtn" hidden><i data-lucide="square"></i>Annuler</button>
+                    <div class="progress" id="progress" hidden>
+                        <div class="bar"><div id="progressBar"></div></div>
+                        <span id="progressText"></span>
+                    </div>
+                </div>
+                <div class="alert" id="error" role="alert" hidden></div>
+
+                <div class="card player-card" id="playerCard" hidden>
+                    <div class="player-head">
+                        <div>
+                            <h2>Résultat</h2>
+                            <p class="muted" id="resultInfo"></p>
+                        </div>
+                        <div class="dl">
+                            <a class="btn" id="dlAudio" download><i data-lucide="download"></i>Audio</a>
+                            <a class="btn ghost" id="dlSrt" download><i data-lucide="captions"></i>SRT</a>
+                            <a class="btn ghost" id="dlVtt" download><i data-lucide="captions"></i>VTT</a>
+                            <button class="btn ghost" id="copyLink" title="Copier le lien direct" aria-label="Copier le lien direct"><i data-lucide="link"></i></button>
+                        </div>
+                    </div>
+                    <audio id="audio" controls preload="auto"></audio>
+                    <div class="rate-row">
+                        <span class="muted">Lecture :</span>
+                        <div class="seg" id="playbackRate">
+                            <button data-rate="0.75">0.75×</button><button data-rate="1" class="on">1×</button><button data-rate="1.25">1.25×</button><button data-rate="1.5">1.5×</button><button data-rate="2">2×</button>
+                        </div>
+                        <label class="toggle small"><input type="checkbox" id="followToggle" checked><span>Suivre le texte</span></label>
+                    </div>
+                    <div class="transcript" id="transcript" aria-label="Transcription synchronisée"></div>
+                </div>
+            </div>
+
+            <aside class="col-side">
+                <div class="card" id="keyCard" hidden>
+                    <h3><i data-lucide="key-round"></i>Accès</h3>
+                    <p class="muted" id="keyInfo">Facultatif : une clé d'API augmente la limite de requêtes.</p>
+                    <div class="voice-row key-row">
+                        <input type="password" id="apiKey" placeholder="Clé d'API" autocomplete="off" aria-label="Clé d'API">
+                        <button class="icon-btn" id="saveKey" title="Enregistrer la clé" aria-label="Enregistrer la clé"><i data-lucide="check"></i></button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><i data-lucide="mic"></i>Voix</h3>
+                    <div class="voice-filters">
+                        <div class="seg engine-seg" id="engineFilter" role="radiogroup" aria-label="Moteur">
+                            <button data-v="edge" class="on" role="radio"><i data-lucide="sparkles"></i>Edge</button><button data-v="google" role="radio"><i data-lucide="languages"></i>Google</button>
+                        </div>
+                        <div class="seg" id="genderFilter" aria-label="Genre">
+                            <button data-v="" class="on">Tous</button><button data-v="male"><i data-lucide="mars"></i>Homme</button><button data-v="female"><i data-lucide="venus"></i>Femme</button>
+                        </div>
+                    </div>
+                    <div class="voice-row">
+                        <select id="voice" aria-label="Voix"></select>
+                        <button class="icon-btn" id="previewBtn" title="Écouter un aperçu" aria-label="Écouter un aperçu"><i data-lucide="play"></i></button>
+                    </div>
+                    <p class="voice-info" id="voiceInfo"></p>
+                    <div class="quick-voices" id="quickVoices"></div>
+                </div>
+
+                <div class="card">
+                    <h3><i data-lucide="sliders-horizontal"></i>Rendu</h3>
+                    <div class="slider">
+                        <label for="speed">Vitesse <output id="speedVal">1.00×</output></label>
+                        <input type="range" id="speed" min="0.25" max="4" step="0.05" value="1">
+                        <div class="ticks"><button data-set="speed:0.75">0.75</button><button data-set="speed:1">1</button><button data-set="speed:1.25">1.25</button><button data-set="speed:1.5">1.5</button><button data-set="speed:2">2</button></div>
+                    </div>
+                    <div class="slider">
+                        <label for="pitch">Hauteur <output id="pitchVal">0 demi-ton</output></label>
+                        <input type="range" id="pitch" min="-12" max="12" step="0.5" value="0">
+                    </div>
+                    <div class="slider">
+                        <label for="volume">Volume <output id="volumeVal">0 dB</output></label>
+                        <input type="range" id="volume" min="-20" max="20" step="1" value="0">
+                    </div>
+                    <label class="toggle"><input type="checkbox" id="normalize"><span>Normaliser le volume (EBU R128)</span></label>
+                    <label class="toggle"><input type="checkbox" id="slow"><span>Diction lente</span></label>
+                </div>
+
+                <div class="card">
+                    <h3><i data-lucide="text"></i>Rythme &amp; texte</h3>
+                    <div class="slider">
+                        <label for="sentencePause">Pause entre phrases <output id="sentencePauseVal">350 ms</output></label>
+                        <input type="range" id="sentencePause" min="0" max="2000" step="50" value="350">
+                    </div>
+                    <div class="slider">
+                        <label for="paragraphPause">Pause entre paragraphes <output id="paragraphPauseVal">800 ms</output></label>
+                        <input type="range" id="paragraphPause" min="0" max="4000" step="100" value="800">
+                    </div>
+                    <label class="toggle"><input type="checkbox" id="cleanup"><span>Nettoyer markdown, liens, emojis</span></label>
+                    <label class="toggle"><input type="checkbox" id="markup" checked><span>Interpréter les balises [pause] [voice] [slow]</span></label>
+                </div>
+
+                <div class="card">
+                    <h3><i data-lucide="file-audio"></i>Fichier</h3>
+                    <div class="grid2">
+                        <label>Format
+                            <select id="format">
+                                <option value="mp3">MP3</option>
+                                <option value="ogg">OGG (Opus)</option>
+                                <option value="aac">AAC</option>
+                                <option value="wav">WAV</option>
+                                <option value="flac">FLAC</option>
+                            </select>
+                        </label>
+                        <label>Fréquence
+                            <select id="sampleRate">
+                                <option value="16000">16 kHz</option>
+                                <option value="24000" selected>24 kHz</option>
+                                <option value="48000">48 kHz</option>
+                            </select>
+                        </label>
+                    </div>
+                    <button class="link" id="resetBtn">Réinitialiser les réglages</button>
+                </div>
+
+                <div class="card">
+                    <h3><i data-lucide="history"></i>Historique</h3>
+                    <ul class="history" id="history"><li class="muted">Rien pour l'instant.</li></ul>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- ===================== API ===================== -->
+    <section id="tab-api" class="tab-panel" hidden>
+        <div class="api-grid">
+            <div class="card">
+                <h2>Appeler l'API avec vos réglages actuels</h2>
+                <p class="muted">Les extraits ci-dessous reflètent le texte et les réglages du Studio.</p>
+                <div class="seg" id="langTabs">
+                    <button data-lang="curl" class="on">cURL</button><button data-lang="js">JavaScript</button><button data-lang="python">Python</button><button data-lang="html">HTML</button>
+                </div>
+                <div class="code-wrap">
+                    <button class="btn ghost copy" id="copyCode"><i data-lucide="copy"></i>Copier</button>
+                    <pre><code id="code"></code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Endpoints</h2>
+                <table class="endpoints">
+                    <tbody>
+                    <tr><td><span class="m post">POST</span></td><td><code>/v1/speech</code></td><td>Texte → audio. <code>response=json|base64</code> pour du JSON avec minutage.</td></tr>
+                    <tr><td><span class="m get">GET</span></td><td><code>/v1/speech?text=…</code></td><td>Idem, utilisable directement dans <code>&lt;audio src&gt;</code>.</td></tr>
+                    <tr><td><span class="m post">POST</span></td><td><code>/v1/plan</code></td><td>Aperçu du découpage et durée estimée, sans synthèse.</td></tr>
+                    <tr><td><span class="m post">POST</span></td><td><code>/v1/jobs</code></td><td>Synthèse asynchrone pour les textes longs.</td></tr>
+                    <tr><td><span class="m get">GET</span></td><td><code>/v1/jobs/:id/events</code></td><td>Progression en direct (Server-Sent Events).</td></tr>
+                    <tr><td><span class="m del">DELETE</span></td><td><code>/v1/jobs/:id</code></td><td>Annuler un job.</td></tr>
+                    <tr><td><span class="m get">GET</span></td><td><code>/v1/audio/:id</code></td><td>Audio rendu (Range supporté, <code>?download=1</code>).</td></tr>
+                    <tr><td><span class="m get">GET</span></td><td><code>/v1/audio/:id/subtitles.srt|vtt</code></td><td>Sous-titres synchronisés.</td></tr>
+                    <tr><td><span class="m get">GET</span></td><td><code>/v1/voices</code></td><td>Voix disponibles (<code>?language=fr</code>).</td></tr>
+                    <tr><td><span class="m get">GET</span></td><td><code>/v1/health</code></td><td>État et capacités du serveur.</td></tr>
+                    </tbody>
+                </table>
+                <p>Spécification complète : <a href="/openapi.json" target="_blank">/openapi.json</a> (importable dans Postman, Insomnia, Swagger…).</p>
+            </div>
+
+            <div class="card">
+                <h2>Paramètres</h2>
+                <table class="params">
+                    <thead><tr><th>Nom</th><th>Type</th><th>Défaut</th><th>Description</th></tr></thead>
+                    <tbody id="paramsTable"></tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Balises dans le texte</h2>
+                <table class="params">
+                    <tbody>
+                    <tr><td><code>[pause]</code> <code>[pause 800ms]</code> <code>[pause 2s]</code></td><td>Silence explicite (1 s par défaut, 10 s max).</td></tr>
+                    <tr><td><code>[voice en-US] … [voice]</code></td><td>Change de voix pour un passage, puis revient à la voix principale.</td></tr>
+                    <tr><td><code>[slow] … [/slow]</code></td><td>Diction lente sur un passage.</td></tr>
+                    <tr><td>Ligne vide</td><td>Nouveau paragraphe (pause de paragraphe).</td></tr>
+                    </tbody>
+                </table>
+                <h3>Erreurs</h3>
+                <p class="muted">Toujours au format <code>{"error":{"code","message","field?"}}</code> avec un statut HTTP adapté
+                    (400 paramètre invalide, 401 clé d'API, 404, 413 texte trop long, 429 débit, 502 moteur de synthèse).</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
