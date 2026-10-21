@@ -5,7 +5,7 @@
 Synthèse vocale **gratuite**, sans clé ni compte, avec deux moteurs de voix : `edge` (voix neuronales) et `google`. Le projet propose :
 
 - une **API HTTP** documentée (OpenAPI) ;
-- un **playground** web (Studio + documentation interactive) ;
+- un **playground** web (Studio, Transcription, documentation interactive) ;
 - un **CLI** ;
 - une **bibliothèque Node**.
 
@@ -21,6 +21,7 @@ Fonctionnalités :
 - On choisit le moteur simplement par la voix : `"voice": "fr-FR"` utilise le moteur google, `"voice": "fr-FR-HenriNeural"` le moteur edge. Les deux se mélangent dans un même texte.
 - **Formats** : mp3, ogg (Opus), aac, wav, flac.
 - **Sous-titres** SRT/WebVTT synchronisés, plus le minutage de chaque segment.
+- **Transcription** (parole → texte) dans le playground : le fichier est lu dans le navigateur, rien n'est calculé sur le serveur. Chaque phrase et chaque mot reçoit un début et une fin (voir [Transcription](#transcription)).
 - **Jobs asynchrones** avec progression en direct (SSE) et annulation.
 - **Nettoyage** markdown, liens et emojis, pratique pour lire une réponse de LLM.
 
@@ -99,6 +100,19 @@ curl -X POST 'localhost:3000/v1/speech?response=json' -H 'Content-Type: applicat
 **Erreurs** : toujours de la forme `{"error":{"code":"invalid_parameter","message":"…","field":"speed"}}`.
 
 Les anciennes routes (`POST /tts`, `/tts/base64`, `GET /tts/stream`, `/voices`, `/health`) restent compatibles, ainsi que `lang` comme alias de `voice`.
+
+## Transcription
+
+L'onglet **Transcription** du playground convertit la parole en texte, sans aucun calcul côté serveur : c'est le navigateur qui reconnaît (Chrome ou Edge, reconnaissance vocale native).
+
+- **Source** : un fichier audio ou vidéo (MP3, WAV, OGG, M4A, MP4, WebM…) ou le micro.
+- **Vitesse** : un fichier long est découpé aux silences et les tranches sont lues en même temps, à 1,5× (hauteur du son conservée) — jusqu'à 6× plus vite que la lecture simple. À la fin de chaque tranche, les mots sont remis dans l'ordre du fichier avant l'alignement. Si rien ne se reconnait, retour automatique à la lecture simple.
+- **Horodatages** : l'audio est décodé localement pour repérer les silences ; les phrases sont découpées sur ces silences et chaque mot reçoit un début et une fin (estimés à quelques dixièmes de seconde). Cliquez sur une phrase ou un mot pour vous y déplacer dans le lecteur.
+- **Exports** : SRT, VTT, TXT et JSON (phrases + mots horodatés), plus le texte envoyable au Studio.
+- **Dictée** : le bouton « Dicter » du Studio permet de remplir le texte au micro.
+- Le fichier est lu à vitesse normale : une minute d'audio prend une minute ; les fichiers longs vont jusqu'à 6× plus vite (découpage aux silences, tranches en parallèle). Selon le navigateur, l'audio peut être envoyé au service de reconnaissance en ligne du fournisseur.
+
+Aucune variable d'environnement ni dépendance n'est requise : la fonction disparaît simplement si le navigateur ne propose pas la reconnaissance vocale.
 
 ## CLI
 

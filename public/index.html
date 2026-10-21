@@ -69,6 +69,7 @@
     </div>
     <nav class="tabs" role="tablist">
         <button role="tab" class="tab active" data-tab="studio" aria-selected="true">Studio</button>
+        <button role="tab" class="tab" data-tab="stt" aria-selected="false">Transcription</button>
         <button role="tab" class="tab" data-tab="api" aria-selected="false">API</button>
     </nav>
     <button class="icon-btn" id="themeBtn" title="Changer de thème" aria-label="Changer de thème"><i data-lucide="sun-moon"></i></button>
@@ -87,6 +88,7 @@
                                 <option value="">Autre voix…</option>
                             </select>
                             <button class="chip" data-insert="slow" title="Passage en diction lente"><i data-lucide="turtle"></i>Lent</button>
+                            <button class="chip" id="dictateBtn" title="Dicter le texte au micro" hidden><i data-lucide="mic"></i><span>Dicter</span></button>
                         </div>
                         <div class="tool-group">
                             <select id="samples" class="chip-select" aria-label="Exemples">
@@ -235,6 +237,87 @@
         </div>
     </section>
 
+    <!-- ===================== TRANSCRIPTION ===================== -->
+    <section id="tab-stt" class="tab-panel" hidden>
+        <div class="layout">
+            <div class="col-main">
+                <div class="alert" id="sttUnsupported" hidden>
+                    Ce navigateur ne propose pas la reconnaissance vocale. Ouvrez cette page dans Chrome ou Edge (version récente).
+                </div>
+                <div class="card stt-source">
+                    <div class="stt-options">
+                        <div class="seg" id="sttMode" role="radiogroup" aria-label="Source">
+                            <button data-v="file" class="on" role="radio"><i data-lucide="file-audio"></i>Fichier</button><button data-v="mic" role="radio"><i data-lucide="mic"></i>Micro</button>
+                        </div>
+                        <select id="sttLang" aria-label="Langue parlée"></select>
+                        <label class="toggle small" id="sttListenWrap"><input type="checkbox" id="sttListen"><span>Écouter pendant la transcription</span></label>
+                    </div>
+                    <label class="stt-drop" id="sttDrop" data-mode="file">
+                        <input type="file" id="sttFile" accept="audio/*,video/*" hidden>
+                        <i data-lucide="upload"></i>
+                        <strong id="sttFileName">Glissez un fichier audio ou vidéo</strong>
+                        <span class="muted" id="sttFileInfo">ou cliquez pour choisir (MP3, WAV, OGG, M4A, MP4, WebM…)</span>
+                    </label>
+                    <button type="button" class="stt-drop stt-mic" id="sttMicBox" hidden>
+                        <i data-lucide="mic"></i>
+                        <strong id="sttMicTitle">Cliquez pour transcrire votre voix</strong>
+                        <span class="muted" id="sttMicHint">Parlez après avoir cliqué. L'enregistrement est conservé pour la réécoute.</span>
+                    </button>
+                </div>
+
+                <div class="actions">
+                    <button class="primary" id="sttStart" disabled><i data-lucide="captions"></i><span>Transcrire</span></button>
+                    <button class="ghost" id="sttStop" hidden><i data-lucide="square"></i>Arrêter</button>
+                    <div class="progress" id="sttProgress" hidden>
+                        <div class="bar"><div id="sttProgressBar"></div></div>
+                        <span id="sttProgressText"></span>
+                    </div>
+                </div>
+                <div class="alert" id="sttError" role="alert" hidden></div>
+
+                <div class="card" id="sttLive" hidden>
+                    <h3><i data-lucide="radio"></i>En direct</h3>
+                    <p class="stt-live" id="sttLiveText"></p>
+                </div>
+
+                <div class="card player-card" id="sttResult" hidden>
+                    <div class="player-head">
+                        <div>
+                            <h2>Transcription</h2>
+                            <p class="muted" id="sttInfo"></p>
+                        </div>
+                        <div class="dl">
+                            <a class="btn" id="sttDlSrt" download><i data-lucide="captions"></i>SRT</a>
+                            <a class="btn ghost" id="sttDlVtt" download><i data-lucide="captions"></i>VTT</a>
+                            <a class="btn ghost" id="sttDlTxt" download><i data-lucide="file-text"></i>TXT</a>
+                            <a class="btn ghost" id="sttDlJson" download><i data-lucide="braces"></i>JSON</a>
+                            <button class="btn ghost" id="sttCopy" title="Copier le texte" aria-label="Copier le texte"><i data-lucide="copy"></i></button>
+                            <button class="btn ghost" id="sttToStudio" title="Lire ce texte avec une voix (Studio)" aria-label="Envoyer vers le Studio"><i data-lucide="audio-lines"></i></button>
+                        </div>
+                    </div>
+                    <audio id="sttAudio" controls preload="auto"></audio>
+                    <div class="rate-row">
+                        <label class="toggle small"><input type="checkbox" id="sttFollow" checked><span>Suivre le texte</span></label>
+                    </div>
+                    <div class="stt-sentences" id="sttSentences" aria-label="Transcription horodatée"></div>
+                </div>
+            </div>
+
+            <aside class="col-side">
+                <div class="card">
+                    <h3><i data-lucide="info"></i>Comment ça marche</h3>
+                    <ul class="stt-notes">
+                        <li>La reconnaissance est faite par votre navigateur : rien n'est calculé sur le serveur.</li>
+                        <li>Fichiers longs : le fichier est découpé aux silences et les tranches sont lues en même temps à 1,5× (hauteur du son conservée), jusqu'à 6× plus vite. En cas d'échec, retour à la lecture simple.</li>
+                        <li>Les phrases sont découpées sur les silences ; chaque phrase et chaque mot reçoit un début et une fin.</li>
+                        <li>Horodatages des phrases : précis. Horodatages des mots : estimés (quelques dixièmes de seconde).</li>
+                        <li>Selon le navigateur, l'audio peut être envoyé à son service de reconnaissance en ligne.</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </section>
+
     <!-- ===================== API ===================== -->
     <section id="tab-api" class="tab-panel" hidden>
         <div class="api-grid">
@@ -297,5 +380,6 @@
 
 <div class="toast" id="toast" role="status" hidden></div>
 <script src="app.js"></script>
+<script src="stt.js"></script>
 </body>
 </html>
